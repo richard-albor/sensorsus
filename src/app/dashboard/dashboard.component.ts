@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { map, catchError} from 'rxjs/operators';
+import { map, catchError, first, tap} from 'rxjs/operators';
 
 
 imports: [
@@ -36,7 +36,9 @@ imports: [
 
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DashboardComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
@@ -103,6 +105,16 @@ export class DashboardComponent implements OnInit {
  
   getEstabelecimentos(estabelecimento: string): Observable<any> {
     return this.http.get(this.baseURL + 'estabelecimento/' + estabelecimento + '/estabelecimento')
+  }
+
+  private readonly API = 'http://localhost:8080/api/estabelecimento';
+  list() {
+    return this.http.get<object[]>(this.API)
+    .pipe(
+      first(),
+      // delay(5000),
+      tap(courses => console.log(courses))
+    );
   }
 
 
